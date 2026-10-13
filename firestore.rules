@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Every user's cloud data lives under users/{uid}/... . A request is
+    // only allowed if it's authenticated AND the uid in the token matches
+    // the uid in the path — so a signed-in user can read/write their own
+    // subtree and nobody else's, and an unauthenticated request is denied
+    // outright. This is deliberately the ONLY rule: no broader allow exists
+    // anywhere else in this file for these paths.
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Everything else is denied by default (no matching rule = deny in
+    // Firestore), so there is no accidental catch-all permissive path.
+  }
+}
