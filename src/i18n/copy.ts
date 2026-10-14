@@ -80,6 +80,18 @@ export type Copy = {
   // Sync status
   syncNow: string; syncing: string; syncSuccess: string; syncError: string;
   lastSynced: string; neverSynced: string; syncDescription: string;
+
+  // Account deletion
+  deleteAccount: string; deleteAccountIntro: string; deleteAccountWarning: string;
+  deleteAccountExportFirst: string; deleteAccountExportButton: string;
+  deleteAccountPasswordPrompt: string; deleteAccountConfirmField: string;
+  deleteAccountConfirmButton: string; deleteAccountCancel: string;
+  deleteAccountStepReauth: string; deleteAccountStepCloud: string;
+  deleteAccountStepLocal: string; deleteAccountStepAuth: string;
+  deleteAccountSuccess: string; deleteAccountPartialFailure: string;
+  deleteAccountNeedsPassword: string; deleteAccountGoogleNativeUnsupported: string; deleteAccountDone: string;
+  deleteAccountExported: string; deleteAccountStepWaitingSync: string; deleteAccountSyncBusy: string;
+  deleteAccountStepLock: string;
 };
 
 export const copy: Record<Language, Copy> = {
@@ -182,6 +194,28 @@ export const copy: Record<Language, Copy> = {
     syncNow: 'Sync now', syncing: 'Syncing…', syncSuccess: 'Up to date', syncError: 'Sync failed, will retry',
     lastSynced: 'Last synced', neverSynced: 'Never synced',
     syncDescription: 'Your farm records are backed up to your account and available if you sign in on another device.',
+    deleteAccount: 'Delete Account',
+    deleteAccountIntro: 'This permanently deletes your account, your cloud backup, and this device\'s copy of your farm data. It cannot be undone.',
+    deleteAccountWarning: 'We recommend exporting a backup before you continue.',
+    deleteAccountExportFirst: 'Export a backup first',
+    deleteAccountExportButton: 'Export backup',
+    deleteAccountPasswordPrompt: 'Enter your password to confirm.',
+    deleteAccountConfirmField: 'Current password',
+    deleteAccountConfirmButton: 'Permanently delete my account',
+    deleteAccountCancel: 'Cancel',
+    deleteAccountStepReauth: 'Confirming your identity…',
+    deleteAccountStepCloud: 'Deleting your cloud data…',
+    deleteAccountStepLocal: 'Removing data from this device…',
+    deleteAccountStepAuth: 'Deleting your account…',
+    deleteAccountSuccess: 'Your account and data have been deleted.',
+    deleteAccountPartialFailure: 'Some steps did not complete. It is safe to try again — nothing already deleted will be duplicated or lost.',
+    deleteAccountNeedsPassword: 'Enter your password to continue.',
+    deleteAccountGoogleNativeUnsupported: 'Deleting a Google-signed-in account from this device isn\'t supported yet. Please use the web app to delete this account.',
+    deleteAccountDone: 'Done',
+    deleteAccountExported: 'Backup exported.',
+    deleteAccountStepWaitingSync: 'Finishing a pending sync before continuing…',
+    deleteAccountSyncBusy: 'A sync is taking longer than expected to finish. Please try again in a moment.',
+    deleteAccountStepLock: 'Securing your account for deletion…',
   },
   kn: {
     tagline: 'ಪ್ರತಿ ಹೊಲದ ಕಥೆ, ಒಂದೇ ಡೈರಿಯಲ್ಲಿ',
@@ -282,6 +316,28 @@ export const copy: Record<Language, Copy> = {
     syncNow: 'ಈಗ ಸಿಂಕ್ ಮಾಡಿ', syncing: 'ಸಿಂಕ್ ಆಗುತ್ತಿದೆ…', syncSuccess: 'ನವೀಕೃತವಾಗಿದೆ', syncError: 'ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ',
     lastSynced: 'ಕೊನೆಯ ಸಿಂಕ್', neverSynced: 'ಎಂದಿಗೂ ಸಿಂಕ್ ಆಗಿಲ್ಲ',
     syncDescription: 'ನಿಮ್ಮ ಕೃಷಿ ದಾಖಲೆಗಳು ನಿಮ್ಮ ಖಾತೆಗೆ ಬ್ಯಾಕಪ್ ಆಗಿವೆ ಮತ್ತು ಇನ್ನೊಂದು ಸಾಧನದಲ್ಲಿ ಸೈನ್ ಇನ್ ಮಾಡಿದಾಗ ಲಭ್ಯವಿರುತ್ತವೆ.',
+    deleteAccount: 'ಖಾತೆ ಅಳಿಸಿ',
+    deleteAccountIntro: 'ಇದು ನಿಮ್ಮ ಖಾತೆ, ನಿಮ್ಮ ಕ್ಲೌಡ್ ಬ್ಯಾಕಪ್ ಮತ್ತು ಈ ಸಾಧನದಲ್ಲಿರುವ ನಿಮ್ಮ ಕೃಷಿ ಡೇಟಾದ ಪ್ರತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸುತ್ತದೆ. ಇದನ್ನು ರದ್ದುಗೊಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.',
+    deleteAccountWarning: 'ಮುಂದುವರಿಯುವ ಮೊದಲು ಬ್ಯಾಕಪ್ ರಫ್ತು ಮಾಡಲು ನಾವು ಶಿಫಾರಸು ಮಾಡುತ್ತೇವೆ.',
+    deleteAccountExportFirst: 'ಮೊದಲು ಬ್ಯಾಕಪ್ ರಫ್ತು ಮಾಡಿ',
+    deleteAccountExportButton: 'ಬ್ಯಾಕಪ್ ರಫ್ತು ಮಾಡಿ',
+    deleteAccountPasswordPrompt: 'ದೃಢೀಕರಿಸಲು ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ.',
+    deleteAccountConfirmField: 'ಪ್ರಸ್ತುತ ಪಾಸ್‌ವರ್ಡ್',
+    deleteAccountConfirmButton: 'ನನ್ನ ಖಾತೆಯನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ',
+    deleteAccountCancel: 'ರದ್ದುಮಾಡಿ',
+    deleteAccountStepReauth: 'ನಿಮ್ಮ ಗುರುತನ್ನು ದೃಢೀಕರಿಸಲಾಗುತ್ತಿದೆ…',
+    deleteAccountStepCloud: 'ನಿಮ್ಮ ಕ್ಲೌಡ್ ಡೇಟಾವನ್ನು ಅಳಿಸಲಾಗುತ್ತಿದೆ…',
+    deleteAccountStepLocal: 'ಈ ಸಾಧನದಿಂದ ಡೇಟಾವನ್ನು ತೆಗೆದುಹಾಕಲಾಗುತ್ತಿದೆ…',
+    deleteAccountStepAuth: 'ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಅಳಿಸಲಾಗುತ್ತಿದೆ…',
+    deleteAccountSuccess: 'ನಿಮ್ಮ ಖಾತೆ ಮತ್ತು ಡೇಟಾವನ್ನು ಅಳಿಸಲಾಗಿದೆ.',
+    deleteAccountPartialFailure: 'ಕೆಲವು ಹಂತಗಳು ಪೂರ್ಣಗೊಂಡಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುವುದು ಸುರಕ್ಷಿತ — ಈಗಾಗಲೇ ಅಳಿಸಿದ್ದು ನಕಲಾಗುವುದಿಲ್ಲ ಅಥವಾ ಕಳೆದುಹೋಗುವುದಿಲ್ಲ.',
+    deleteAccountNeedsPassword: 'ಮುಂದುವರಿಯಲು ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ.',
+    deleteAccountGoogleNativeUnsupported: 'ಈ ಸಾಧನದಿಂದ Google ಖಾತೆಯನ್ನು ಅಳಿಸುವುದು ಇನ್ನೂ ಬೆಂಬಲಿತವಿಲ್ಲ. ದಯವಿಟ್ಟು ಈ ಖಾತೆಯನ್ನು ಅಳಿಸಲು ವೆಬ್ ಆ್ಯಪ್ ಬಳಸಿ.',
+    deleteAccountDone: 'ಮುಗಿದಿದೆ',
+    deleteAccountExported: 'ಬ್ಯಾಕಪ್ ರಫ್ತಾಗಿದೆ.',
+    deleteAccountStepWaitingSync: 'ಮುಂದುವರಿಯುವ ಮೊದಲು ಬಾಕಿ ಇರುವ ಸಿಂಕ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಲಾಗುತ್ತಿದೆ…',
+    deleteAccountSyncBusy: 'ಸಿಂಕ್ ಪೂರ್ಣಗೊಳ್ಳಲು ನಿರೀಕ್ಷೆಗಿಂತ ಹೆಚ್ಚು ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    deleteAccountStepLock: 'ಅಳಿಸುವಿಕೆಗಾಗಿ ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಸುರಕ್ಷಿತಗೊಳಿಸಲಾಗುತ್ತಿದೆ…',
   },
   hi: {
     tagline: 'हर खेत की कहानी, एक ही डायरी में',
@@ -382,5 +438,27 @@ export const copy: Record<Language, Copy> = {
     syncNow: 'अभी सिंक करें', syncing: 'सिंक हो रहा है…', syncSuccess: 'अप टू डेट', syncError: 'सिंक विफल, फिर कोशिश होगी',
     lastSynced: 'आख़िरी सिंक', neverSynced: 'कभी सिंक नहीं हुआ',
     syncDescription: 'आपके कृषि रिकॉर्ड आपके खाते में बैकअप हैं और किसी अन्य डिवाइस पर साइन इन करने पर उपलब्ध होंगे।',
+    deleteAccount: 'खाता हटाएं',
+    deleteAccountIntro: 'इससे आपका खाता, आपका क्लाउड बैकअप, और इस डिवाइस पर मौजूद आपके कृषि डेटा की प्रति स्थायी रूप से हट जाएगी। इसे पूर्ववत नहीं किया जा सकता।',
+    deleteAccountWarning: 'आगे बढ़ने से पहले बैकअप निर्यात करने की सलाह दी जाती है।',
+    deleteAccountExportFirst: 'पहले बैकअप निर्यात करें',
+    deleteAccountExportButton: 'बैकअप निर्यात करें',
+    deleteAccountPasswordPrompt: 'पुष्टि के लिए अपना पासवर्ड दर्ज करें।',
+    deleteAccountConfirmField: 'वर्तमान पासवर्ड',
+    deleteAccountConfirmButton: 'मेरा खाता स्थायी रूप से हटाएं',
+    deleteAccountCancel: 'रद्द करें',
+    deleteAccountStepReauth: 'आपकी पहचान की पुष्टि हो रही है…',
+    deleteAccountStepCloud: 'आपका क्लाउड डेटा हटाया जा रहा है…',
+    deleteAccountStepLocal: 'इस डिवाइस से डेटा हटाया जा रहा है…',
+    deleteAccountStepAuth: 'आपका खाता हटाया जा रहा है…',
+    deleteAccountSuccess: 'आपका खाता और डेटा हटा दिया गया है।',
+    deleteAccountPartialFailure: 'कुछ चरण पूरे नहीं हुए। दोबारा प्रयास करना सुरक्षित है — जो पहले ही हट चुका है वह न तो दोहराया जाएगा न ही खोएगा।',
+    deleteAccountNeedsPassword: 'आगे बढ़ने के लिए अपना पासवर्ड दर्ज करें।',
+    deleteAccountGoogleNativeUnsupported: 'इस डिवाइस से Google खाता हटाना अभी समर्थित नहीं है। कृपया इस खाते को हटाने के लिए वेब ऐप का उपयोग करें।',
+    deleteAccountDone: 'पूर्ण हुआ',
+    deleteAccountExported: 'बैकअप निर्यात हो गया।',
+    deleteAccountStepWaitingSync: 'आगे बढ़ने से पहले लंबित सिंक पूरा किया जा रहा है…',
+    deleteAccountSyncBusy: 'सिंक पूरा होने में अपेक्षा से अधिक समय लग रहा है। कृपया कुछ देर बाद फिर से प्रयास करें।',
+    deleteAccountStepLock: 'हटाने के लिए आपका खाता सुरक्षित किया जा रहा है…',
   },
 };

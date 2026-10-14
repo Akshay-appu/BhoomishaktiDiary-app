@@ -9,7 +9,7 @@ import { AccountSection } from './AccountSection';
 import { BackupSection } from './BackupSection';
 
 export function MoreScreen({
-  t, lg, language, onLanguageChange, auth, sync, onSignIn, onSignOutConfirm, backup, onError, onConfirmRestore,
+  t, lg, language, onLanguageChange, auth, sync, onSignIn, onSignOutConfirm, onDeleteAccount, backup, onError, onConfirmRestore,
 }: {
   t: Copy;
   lg: boolean;
@@ -19,6 +19,7 @@ export function MoreScreen({
   sync: ReturnType<typeof useSync>;
   onSignIn: () => void;
   onSignOutConfirm: () => void;
+  onDeleteAccount: () => void;
   backup: {
     exportBackup: () => Promise<string>;
     previewRestore: (text: string) => { data: BackupData; counts: BackupCounts };
@@ -31,7 +32,10 @@ export function MoreScreen({
       <Text style={[shared.pageTitle, lg && shared.pageTitleLg]}>{t.more}</Text>
       <Text style={[shared.pageSubtitle, lg && shared.pageSubtitleLg]}>{t.settingsSubtitle}</Text>
 
-      <AccountSection t={t} language={language} auth={auth} sync={sync} onSignIn={onSignIn} onSignOutConfirm={onSignOutConfirm} />
+      <AccountSection
+        t={t} language={language} auth={auth} sync={sync}
+        onSignIn={onSignIn} onSignOutConfirm={onSignOutConfirm} onDeleteAccount={onDeleteAccount}
+      />
 
       <Text style={shared.fieldLabel}>{t.language}</Text>
       {(['en', 'kn', 'hi'] as Language[]).map(lang => (

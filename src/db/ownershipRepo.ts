@@ -25,3 +25,19 @@ export async function claimUnclaimedData(db: SQLite.SQLiteDatabase, uid: string)
     await db.runAsync('UPDATE farm_profile SET userId = ?, updatedAt = ? WHERE id = 1 AND userId IS NULL', uid, now);
   });
 }
+
+// Account deletion only: permanently removes this uid's rows, including
+// tombstones (unlike every other delete path in this app, which soft-deletes
+// via deletedAt so sync can propagate it — there is no "other device" left
+// to sync a tombstone to once the account itself is gone). Scoped strictly
+// to `uid`, never a wildcard, so one account can never purge another's rows
+// even though they may share this device's SQLite file. Idempotent: deleting
+// rows that are already gone is a no-op, safe to retry.
+export async function purgeAccountData(db: SQLite.SQLiteDatabase, uid: string): Promise<void> {
+  await db.withTransactionAsync(async () => {
+    for (const table of SYNCABLE_TABLES) {
+      await db.runAsync(`DELETE FROM ${table} WHERE userId = ?`, uid);
+    }
+    await db.runAsync('DELETE FROM farm_profile WHERE id = 1 AND userId = ?', uid);
+  });
+}

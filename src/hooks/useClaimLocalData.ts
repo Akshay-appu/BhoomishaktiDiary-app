@@ -3,7 +3,7 @@ import * as SQLite from 'expo-sqlite';
 import { useCallback, useEffect, useState } from 'react';
 import * as ownershipRepo from '../db/ownershipRepo';
 
-const promptedKey = (uid: string) => `bhoomishakti:claim-prompted:${uid}`;
+export const promptedKey = (uid: string) => `bhoomishakti:claim-prompted:${uid}`;
 
 // Offers, once per account per device, to attach any pre-existing
 // userId-IS-NULL local data (entered before this account existed) to the

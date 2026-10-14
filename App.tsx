@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
 import {
   SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View,
 } from 'react-native';
@@ -16,7 +18,9 @@ import { useBackup } from './src/hooks/useBackup';
 import { useAuth } from './src/hooks/useAuth';
 import { useClaimLocalData } from './src/hooks/useClaimLocalData';
 import { useSync } from './src/hooks/useSync';
+import { useAccountDeletion } from './src/hooks/useAccountDeletion';
 import { AuthScreen } from './src/screens/AuthScreen';
+import { DeleteAccountModal } from './src/screens/DeleteAccountModal';
 import { openDatabase } from './src/db/schema';
 import { Crop, Entry, FinanceEntry, Harvest, Plot } from './src/db/schema';
 import { BackupData } from './src/db/backupRepo';
@@ -46,6 +50,7 @@ export default function App() {
   const [activityPlotId, setActivityPlotId] = useState<number | null>(null);
   const [activityCropId, setActivityCropId] = useState<number | null>(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   const { isMobile, lg, horizontalPadding, gridColumns, cardWidth } = useResponsive();
   const { webAlert, setWebAlert, showAlert } = useCrossPlatformAlert();
@@ -69,10 +74,15 @@ export default function App() {
     ]);
   }, [activities, profile, plots, crops, finance, harvests]);
 
-  const sync = useSync(db, ownerId, refreshAllEntities);
+  // Shared lock between sync and account deletion: deletion sets this true
+  // for its whole duration so neither the periodic sync interval nor a
+  // manual "Sync Now" click can recreate cloud documents mid-deletion.
+  const syncPausedRef = useRef(false);
+  const sync = useSync(db, ownerId, refreshAllEntities, syncPausedRef);
   const claimLocalData = useClaimLocalData(db, ownerId, () => {
     void refreshAllEntities().then(() => sync.syncNow());
   });
+  const accountDeletion = useAccountDeletion(db, ownerId, auth.user, sync.syncingRef, syncPausedRef);
 
   const t = useMemo(() => copy[language], [language]);
 
@@ -305,6 +315,7 @@ export default function App() {
             sync={sync}
             onSignIn={() => setShowAuth(true)}
             onSignOutConfirm={() => auth.signOutUser()}
+            onDeleteAccount={() => setShowDeleteAccount(true)}
             backup={backup}
             onError={message => showAlert('Save failed', message)}
             onConfirmRestore={confirmRestore}
@@ -348,6 +359,16 @@ export default function App() {
       />
 
       <AuthScreen visible={showAuth} isMobile={isMobile} t={t} auth={auth} onClose={() => setShowAuth(false)} />
+
+      <DeleteAccountModal
+        visible={showDeleteAccount}
+        isMobile={isMobile}
+        t={t}
+        isPasswordAccount={auth.user?.providerData.some(p => p.providerId === 'password') ?? false}
+        deletion={accountDeletion}
+        backup={backup}
+        onClose={() => setShowDeleteAccount(false)}
+      />
 
       <AlertModal alert={webAlert} onClose={() => setWebAlert(null)} />
     </SafeAreaView>

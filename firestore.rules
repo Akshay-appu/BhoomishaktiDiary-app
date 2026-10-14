@@ -9,7 +9,34 @@ service cloud.firestore {
     // outright. This is deliberately the ONLY rule: no broader allow exists
     // anywhere else in this file for these paths.
     match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Reads and deletes are always allowed for the owner. Reads can't
+      // recreate data; deletes are exactly what account-deletion cleanup
+      // needs to keep working even while a deletion lock (below) is active.
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+
+      // Creates/updates are allowed for the owner ONLY while no account
+      // deletion is in progress for this uid. Account deletion
+      // (src/firebase/accountDeletion.ts) writes a marker doc at
+      // users/{uid}/meta/deletionInProgress before deleting anything; while
+      // it exists, this condition blocks EVERY device/session signed into
+      // this account from creating or updating any synced record — which
+      // is what stops a concurrent sync push (src/firebase/sync.ts's
+      // pushEntity, which only ever creates/updates, never deletes) from
+      // recreating data the deletion flow just removed. A client-side pause
+      // flag alone (see useSync.ts/useAccountDeletion.ts) cannot provide
+      // this guarantee across devices — this rule is what actually does.
+      //
+      // The lock doc itself is governed by this same condition: before it
+      // exists, !exists(...) is true so creating it succeeds; once it
+      // exists, the same check blocks it from being touched again via
+      // create/update (including by a retry) — client code must
+      // check-then-create (ensureDeletionLock), never blindly overwrite.
+      // The lock is intentionally never cleared by client code on error or
+      // success (see accountDeletion.ts) — deleting it is still possible
+      // for the owner (covered by the unconditional allow above) but
+      // nothing in this app's normal flow does so.
+      allow create, update: if request.auth != null && request.auth.uid == userId
+        && !exists(/databases/$(database)/documents/users/$(userId)/meta/deletionInProgress);
     }
 
     // Everything else is denied by default (no matching rule = deny in

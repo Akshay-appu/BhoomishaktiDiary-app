@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { DangerButton, PrimaryButton, SecondaryButton } from '../components/Buttons';
 import { useAuth } from '../hooks/useAuth';
 import { useSync } from '../hooks/useSync';
@@ -8,7 +8,7 @@ import { formatLongDate } from '../utils/format';
 import { shared } from '../styles/shared';
 
 export function AccountSection({
-  t, language, auth, sync, onSignIn, onSignOutConfirm,
+  t, language, auth, sync, onSignIn, onSignOutConfirm, onDeleteAccount,
 }: {
   t: Copy;
   language: Language;
@@ -16,6 +16,7 @@ export function AccountSection({
   sync: ReturnType<typeof useSync>;
   onSignIn: () => void;
   onSignOutConfirm: () => void;
+  onDeleteAccount: () => void;
 }) {
   return (
     <View style={shared.tipCard}>
@@ -46,6 +47,9 @@ export function AccountSection({
           </View>
           <SecondaryButton label={t.syncNow} onPress={() => sync.syncNow()} />
           <DangerButton label={t.signOut} onPress={onSignOutConfirm} />
+          <TouchableOpacity onPress={onDeleteAccount} style={{ marginTop: 10, alignItems: 'center' }}>
+            <Text style={shared.link}>{t.deleteAccount}</Text>
+          </TouchableOpacity>
         </>
       ) : (
         <>

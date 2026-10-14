@@ -1,5 +1,7 @@
 import * as SQLite from 'expo-sqlite';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState, type MutableRefObject,
+} from 'react';
 import { db as firestore } from '../firebase/config';
 import {
   ALL_ENTITY_SYNC_CONFIGS, pullEntity, pullProfile, pushEntity, pushProfile,
@@ -13,7 +15,17 @@ const FOREGROUND_SYNC_INTERVAL_MS = 2 * 60 * 1000;
 // on a conservative foreground interval, and manually via syncNow(). Not a
 // realtime listener — see Phase 3 plan for why that scope was deliberately
 // kept out.
-export function useSync(db: SQLite.SQLiteDatabase | null, ownerId: string | null, onSynced: () => Promise<void>) {
+//
+// `pausedRef` is a shared lock with useAccountDeletion: while account
+// deletion is in progress, it sets pausedRef.current = true so that NEITHER
+// the periodic interval NOR a manual "Sync Now" click can start a new push
+// that would recreate cloud documents the deletion flow just removed. This
+// only protects against races originating from this same app session —
+// see useAccountDeletion.ts for the documented cross-device limitation.
+export function useSync(
+  db: SQLite.SQLiteDatabase | null, ownerId: string | null, onSynced: () => Promise<void>,
+  pausedRef: MutableRefObject<boolean>
+) {
   const [status, setStatus] = useState<SyncStatus>('idle');
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -21,6 +33,7 @@ export function useSync(db: SQLite.SQLiteDatabase | null, ownerId: string | null
 
   const syncNow = useCallback(async () => {
     if (!db || !ownerId || !firestore) return;
+    if (pausedRef.current) return;
     if (syncingRef.current) return;
     syncingRef.current = true;
     setStatus('syncing');
@@ -64,5 +77,11 @@ export function useSync(db: SQLite.SQLiteDatabase | null, ownerId: string | null
     return () => clearInterval(interval);
   }, [ownerId, syncNow]);
 
-  return { status, lastSyncedAt, errorMessage, syncNow };
+  return {
+    status, lastSyncedAt, errorMessage, syncNow,
+    // Exposed so useAccountDeletion can wait out an already-in-flight sync
+    // (reading a ref, not state, so the wait loop always sees the live
+    // value rather than a stale closure).
+    syncingRef,
+  };
 }
